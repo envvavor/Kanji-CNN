@@ -117,4 +117,4 @@ if __name__ == '__main__':
         #     'predicted_char': huruf_tebakan_ai,
         #     'confidence': round(akurasi, 2),
         #     'is_match': is_match
-        # })
+        # }) hehe
