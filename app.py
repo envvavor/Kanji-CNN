@@ -10,11 +10,33 @@ app = Flask(__name__)
 CORS(app)
 
 daftar_huruf = {
-    0: 'あ', 1: 'い', 2: 'う', 3: 'え', 4: 'お', 
-    5: 'か', 6: 'き', 7: 'く', 8: 'け', 9: 'こ', 
-    10: 'さ', 11: 'し', 12: 'す', 13: '君', 14: '日', 15: '本'
+    0: 'あ', 1: 'い', 2: 'う', 3: 'え', 4: 'お',
+    5: 'か', 6: 'き', 7: 'く', 8: 'け', 9: 'こ',
+    10: 'さ', 11: 'し', 12: 'す', 13: 'せ', 14: 'そ',
+    15: 'た', 16: 'ち', 17: 'つ', 18: 'て', 19: 'と',
+    20: 'な', 21: 'に', 22: 'ぬ', 23: 'ね', 24: 'の',
+    25: 'は', 26: 'ひ', 27: 'ふ', 28: 'へ', 29: 'ほ',
+    30: 'ま', 31: 'み', 32: 'む', 33: 'め', 34: 'も',
+    35: 'や', 36: 'ゆ', 37: 'よ', 38: 'ら', 39: 'り',
+    40: 'る', 41: 'れ', 42: 'ろ', 43: 'わ', 44: 'を',
+    45: 'ん', 46: 'ア', 47: 'イ', 48: 'ウ', 49: 'エ',
+    50: 'オ', 51: 'カ', 52: 'キ', 53: 'ク', 54: 'ケ',
+    55: 'コ', 56: 'サ', 57: 'シ', 58: 'ス', 59: 'セ',
+    60: 'ソ', 61: 'タ', 62: 'チ', 63: 'ツ', 64: 'テ',
+    65: 'ト', 66: 'ナ', 67: 'ニ', 68: 'ヌ', 69: 'ネ',
+    70: 'ノ', 71: 'ハ', 72: 'ヒ', 73: 'フ', 74: 'ヘ',
+    75: 'ホ', 76: 'マ', 77: 'ミ', 78: 'ム', 79: 'メ',
+    80: 'モ', 81: 'ヤ', 82: 'ユ', 83: 'ヨ', 84: 'ラ',
+    85: 'リ', 86: 'ル', 87: 'レ', 88: 'ロ', 89: 'ワ',
+    90: 'ヲ', 91: 'ン', 92: '一', 93: '二'
 }
+
 jumlah_kelas = len(daftar_huruf)
+
+mirip = {
+    'へ': 'ヘ', 'ヘ': 'へ',
+    '二': 'ニ', 'ニ': '二',
+}
 
 model = Sequential([
     Conv2D(32, (3,3), activation='relu', input_shape=(64, 64, 1)),
@@ -33,7 +55,7 @@ model = Sequential([
 ])
 
 try:
-    model.load_weights('model_kanji.keras')
+    model.load_weights('model_huruf.keras')
     print("Model AI berhasil dimuat!")
 except Exception as e:
     print("Gagal memuat weights:", str(e))
@@ -71,7 +93,7 @@ def predict():
         img = img.reshape(1, 64, 64, 1)
 
         # Tebak
-        prediksi = model.predict(img)[0] # Ambil array probabilitas dari 16 huruf
+        prediksi = model.predict(img)[0] # Ambil array probabilitas
         
         # Ambil 3 index dengan nilai tertinggi (diurutkan dari yang terbesar)
         top_3_indices = np.argsort(prediksi)[-3:][::-1]
@@ -86,7 +108,12 @@ def predict():
         # Index tertinggi tetap di urutan ke-0 untuk patokan utama
         huruf_tebakan_ai = top_3_results[0]['char']
         akurasi_utama = top_3_results[0]['prob']
-        is_match = (huruf_tebakan_ai == target_char)
+
+        pasangan_mirip = mirip.get(target_char)
+        is_match = (huruf_tebakan_ai == target_char) or (huruf_tebakan_ai == pasangan_mirip)
+
+        if is_match and huruf_tebakan_ai != target_char:
+            huruf_tebakan_ai = target_char
 
         # Kirim data Top 3 ke Laravel
         return jsonify({
