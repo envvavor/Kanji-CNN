@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import base64
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+from tensorflow.keras.layers import Input, Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -28,7 +28,23 @@ daftar_huruf = {
     75: 'ホ', 76: 'マ', 77: 'ミ', 78: 'ム', 79: 'メ',
     80: 'モ', 81: 'ヤ', 82: 'ユ', 83: 'ヨ', 84: 'ラ',
     85: 'リ', 86: 'ル', 87: 'レ', 88: 'ロ', 89: 'ワ',
-    90: 'ヲ', 91: 'ン', 92: '一', 93: '二'
+    90: 'ヲ', 91: 'ン', 92: '一', 93: '七', 94: '万',
+    95: '三', 96: '上', 97: '下', 98: '中', 99: '九',
+    100: '二', 101: '五', 102: '人', 103: '今', 104: '休',
+    105: '何', 106: '先', 107: '入', 108: '八', 109: '六',
+    110: '円', 111: '出', 112: '前', 113: '北', 114: '十',
+    115: '千', 116: '午', 117: '半', 118: '南', 119: '友',
+    120: '口', 121: '右', 122: '名', 123: '四', 124: '国',
+    125: '土', 126: '外', 127: '大', 128: '天', 129: '女',
+    130: '子', 131: '学', 132: '小', 133: '山', 134: '川',
+    135: '左', 136: '年', 137: '後', 138: '日', 139: '時',
+    140: '書', 141: '月', 142: '木', 143: '本', 144: '来',
+    145: '東', 146: '校', 147: '母', 148: '毎', 149: '気',
+    150: '水', 151: '火', 152: '父', 153: '生', 154: '男',
+    155: '白', 156: '百', 157: '空', 158: '聞', 159: '花',
+    160: '行', 161: '西', 162: '見', 163: '話', 164: '語',
+    165: '読', 166: '車', 167: '金', 168: '長', 169: '間',
+    170: '雨', 171: '電', 172: '食', 173: '高', 174: '魚'
 }
 
 jumlah_kelas = len(daftar_huruf)
@@ -36,10 +52,12 @@ jumlah_kelas = len(daftar_huruf)
 mirip = {
     'へ': 'ヘ', 'ヘ': 'へ',
     '二': 'ニ', 'ニ': '二',
+    '口': 'ロ', 'ロ': '口',
 }
 
 model = Sequential([
-    Conv2D(32, (3,3), activation='relu', input_shape=(64, 64, 1)),
+    Input(shape=(64, 64, 1)),
+    Conv2D(32, (3,3), activation='relu'),
     MaxPooling2D(2, 2),
     
     Conv2D(64, (3,3), activation='relu'),
@@ -55,7 +73,7 @@ model = Sequential([
 ])
 
 try:
-    model.load_weights('model_huruf.keras')
+    model.load_weights('model_huruf_stage2.keras')
     print("Model AI berhasil dimuat!")
 except Exception as e:
     print("Gagal memuat weights:", str(e))
