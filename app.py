@@ -73,7 +73,7 @@ model = Sequential([
 ])
 
 try:
-    model.load_weights('model_huruf_stage2.keras')
+    model.load_weights('model_huruf_stage3kayanya.keras')
     print("Model AI berhasil dimuat!")
 except Exception as e:
     print("Gagal memuat weights:", str(e))
